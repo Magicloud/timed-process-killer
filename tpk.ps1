@@ -17,10 +17,13 @@ if ((Test-Admin) -eq $false) {
 
 'running with full privileges'
 
+$Cult = New-Object system.globalization.cultureinfo("zh-CN")
+
 for (; ; ) {
     $Now = Get-Date
+    $Host.UI.RawUI.WindowTitle = $Cult.DateTimeFormat.GetDayName($Now.DayOfWeek)
     Get-Process | ForEach-Object -Process {
-        if ( ($_.ProcessName -in 'browser', 'qbclient') -and (($Now - $_.StartTime) -gt $1minute) ) {
+        if ( ($_.ProcessName -in 'browser', 'qbclient') -and ($Now -gt $_.StartTime.AddSeconds(30)) ) {
             Stop-Process -Id $_.Id
         }
     }
